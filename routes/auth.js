@@ -8,36 +8,10 @@ const jwt = require("jsonwebtoken");
 const auth = require("../middlewares/auth");
 const { generateOTP, mailSender } = require('../middlewares/utils')
 
-// const firebaseAdmin = require('firebase-admin');
-// const { initializeApp } = require('firebase-admin/app');
-// const app = initializeApp();
-
-// const accountSid = process.env.TWILIO_ACCOUNT_SID;
-// const authToken = process.env.TWILIO_AUTH_TOKEN;
-// const client = require('twilio')(accountSid, authToken);
-
-// const { Vonage } = require('@vonage/server-sdk')
-// const { NCCOBuilder, Talk, OutboundCallWithNCCO } = require('@vonage/voice')
-
-// const vonage = new Vonage({
-//   apiKey: VONAGE_API_KEY,
-//   apiSecret: VONAGE_API_SECRET,
-//   applicationId: VONAGE_APPLICATION_ID,
-//   privateKey: VONAGE_APPLICATION_PRIVATE_KEY_PATH
-// })
-
-
-
-
-
 
 authRouter.get("/", (req, res) => {
   res.json({ "hello":" hello auth!!!!!"})
 })
-
-
-
-
 
 // SIGN UP
 authRouter.post("/signup", async (req, res) => {
@@ -82,8 +56,16 @@ authRouter.post("/signup", async (req, res) => {
 
    await mailSender(to, subject, text, html);
 
+   let userWallet = new Wallet({
+    amount :0,
+    userId: user._id
+  });
+
+  userWallet = await userWallet.save();
+
+
+
     verificationToken = await verificationToken.save();
-  
     user = await user.save();
     return res.json(user);
 
