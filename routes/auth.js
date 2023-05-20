@@ -80,7 +80,7 @@ authRouter.post("/signup", async (req, res) => {
       "Please use the bellow OTP code to verify your account.\n" +
       OTP;
 
-    mailSender(to, subject, text, html);
+   await mailSender(to, subject, text, html);
 
     verificationToken = await verificationToken.save();
   
@@ -169,7 +169,7 @@ authRouter.post("/resend-otp", async (req, res) => {
         "Please use the bellow OTP code to verify your account.\n" +
         OTP;
 
-      mailSender(to, subject, text, html);
+     await mailSender(to, subject, text, html);
 
       verificationToken = await verificationToken.save();
 

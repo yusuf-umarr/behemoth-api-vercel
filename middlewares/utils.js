@@ -19,7 +19,7 @@ exports.generateOTP = () => {
 
 //mail sender 
 exports.mailSender = async(to, subject, text, html) => {
-  const request =await  mailjet.post("send", { version: "v3.1" }).request({
+  const request = await  mailjet.post("send", { version: "v3.1" }).request({
     Messages: [
       {
         From: {
