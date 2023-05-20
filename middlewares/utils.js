@@ -19,26 +19,37 @@ exports.generateOTP = () => {
 
 //mail sender 
 exports.mailSender = async(to, subject, text, html) => {
-  const request = await  mailjet.post("send", { version: "v3.1" }).request({
-    Messages: [
-      {
-        From: {
-          Email: process.env.MAIL_JET_EMAIL,
-          Name: "Behemoth",
+
+  try {
+    const request = await  mailjet.post("send", { version: "v3.1" }).request({
+      Messages: [
+        {
+          From: {
+            Email: process.env.MAIL_JET_EMAIL,
+            Name: "Behemoth",
+          },
+          To: [to],
+          Subject: subject,
+          TextPart: text,
+          HTMLPart: html,
+          CustomID: "AppGettingStartedTest",
         },
-        To: [to],
-        Subject: subject,
-        TextPart: text,
-        HTMLPart: html,
-        CustomID: "AppGettingStartedTest",
-      },
-    ],
-  });
-  request
-    .then((result) => {
-      console.log(result.body);
-    })
-    .catch((err) => {
-      console.log(err.statusCode);
+      ],
     });
+    return console.log("done");
+
+    
+  } catch (e) {
+    return console.log(e);
+
+    
+  }
+
+  // request
+  //   .then((result) => {
+  //     console.log(result.body);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err.statusCode);
+  //   });
 };
