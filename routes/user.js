@@ -5,6 +5,9 @@ const User = require("../models/user");
 const Wallet = require("../models/wallet")
 const bcryptjs = require("bcryptjs");
 
+const pushNotificationController = require("../controller/push-notification.controller");
+
+
 // const accountSid = process.env.TWILIO_ACCOUNT_SID;
 // const authToken = process.env.TWILIO_AUTH_TOKEN;
 // const client = require('twilio')(accountSid, authToken);
@@ -29,7 +32,6 @@ userRouter.post("/update-user", auth, async (req, res) => {
     user.password = hashedPassword;
     user.profilePic = profilePic;
     user.address = address;
-    user.wallet = wallet;
     user = await user.save();
     res.json(user);
   } catch (e) {
@@ -54,10 +56,10 @@ userRouter.post("/tokenIsValid", async (req, res) => {
 
 // get user data
 
-userRouter.get("/get-user", auth, async (req, res) => {
-  const user = await User.findById(req.user);
-  res.json({ ...user._doc, token: req.token });
-});
+// userRouter.get("/get-user", auth, async (req, res) => {
+//   const user = await User.findById(req.user);
+//   res.json({ ...user._doc, token: req.token });
+// });
 
 // create user-wallet 
 userRouter.post("/create-wallet", auth, async (req, res) => {
@@ -127,10 +129,48 @@ userRouter.get("/get-wallet", auth, async (req, res) => {
   }
 });
 
+//get user
+userRouter.get("/get-user", async (req, res) => {
+  try {
+    const token = req.header("x-auth-token");
+    if (!token) return res.json(false);
+ 
+    const verified = jwt.verify(token, "passwordKey");
+    if (!verified) return res.json(false);
 
+    const user = await User.findById(verified.id);
+ 
+    res.json({ ...user._doc, token });
 
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 
+userRouter.get("/SendNotification", pushNotificationController.SendNotification);
+userRouter.post("/SendNotificationToDevice", pushNotificationController.SendNotificationToDevice);
 
+// add one signal id
+userRouter.post("/add-onesignal-id", async (req, res) => {
+  try {
+    const { oneSignalId, email } = req.body;
+
+    let existingUser = await User.findOne({ email });
+    if (existingUser) {
+      existingUser.oneSignalId =oneSignalId;
+
+      existingUser = await existingUser.save();
+
+      return res.json("oneSignalId added");
+    } else{
+      return res.status(400).json("User not found." );
+
+    }
+  
+  } catch (e) {
+    res.status(500).json( e.message );
+  }
+});
 
 
 

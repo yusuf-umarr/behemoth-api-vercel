@@ -28,6 +28,11 @@ const userSchema = mongoose.Schema({
     type: Boolean,
     default: false
   },
+  oneSignalId: {
+    type: String,
+    trim: true,
+    default:""
+  },
 
  
 });
