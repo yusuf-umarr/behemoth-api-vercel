@@ -6,6 +6,8 @@ const Wallet = require("../models/wallet")
 const bcryptjs = require("bcryptjs");
 
 const pushNotificationController = require("../controller/push-notification.controller");
+const {ONE_SIGNAL_CONFIG} = require("../config/app.config");
+const pushNotificationService = require("../services/push-notification.service");
 
 
 // const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -54,12 +56,6 @@ userRouter.post("/tokenIsValid", async (req, res) => {
   }
 });
 
-// get user data
-
-// userRouter.get("/get-user", auth, async (req, res) => {
-//   const user = await User.findById(req.user);
-//   res.json({ ...user._doc, token: req.token });
-// });
 
 // create user-wallet 
 userRouter.post("/create-wallet", auth, async (req, res) => {
@@ -79,6 +75,8 @@ userRouter.post("/create-wallet", auth, async (req, res) => {
 userRouter.post("/fund-wallet", auth, async (req, res) => {
   try {
 
+    let user = await User.findById(req.user);
+
     const { amount} = req.body;
 
     let wallet = await Wallet.find({userId:req.user});
@@ -87,9 +85,19 @@ userRouter.post("/fund-wallet", auth, async (req, res) => {
 
     let updateWallet  =  await Wallet.findById(walletId)
 
+    let headingText ="Wallet Funded"
+    let contentText =`You have successfuly added ${amount} to your wallet`
+    let deviceId =user.oneSignalId
+
+
     updateWallet.amount += amount;
 // 
     updateWallet = await updateWallet.save();
+
+   await pushNotificationController.sendWalletNotification(
+    headingText, contentText, deviceId,
+    )
+
     res.json(updateWallet);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -143,7 +151,7 @@ userRouter.get("/get-user", async (req, res) => {
     res.json({ ...user._doc, token });
 
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: e.message }); 
   }
 });
 

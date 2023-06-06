@@ -12,7 +12,7 @@ exports.SendNotification = (req, res, next)=> {
         content_available: true,  //notification will work in background
         small_icon: "ic_notification_icon",
         data:{
-            PushTitle: "CUSTOM NOTIFICATION",
+            PushTitle: "CUSTOM NOTIFICATION", 
         },
 
     };
@@ -56,3 +56,40 @@ exports.SendNotificationToDevice = (req, res, next)=> {
 
     });
 };
+
+exports.sendWalletNotification = async(headingText, contentText, deviceId) => {
+
+    try {
+
+         (req, res, next)=> {
+            var message = {
+                app_id: ONE_SIGNAL_CONFIG.APP_ID,
+                headings: {"en": headingText}, 
+                contents: {"en": contentText},
+                included_segments:["include_player_ids"],
+                include_player_ids: deviceId,
+                content_available: true, 
+                small_icon: "ic_notification_icon",
+                data:{
+                    PushTitle: "CUSTOM NOTIFICATION",
+                },
+        
+            };
+        
+            pushNotificationService.SendNotification(message,(error, results)=>{
+                if (error) {
+                    return next(error);  
+                }
+                return res.status(200).send({
+                    message: "Success",
+                    data: results,
+                })
+        
+            });
+        };
+        
+    } catch (error) {
+        
+    }
+
+}

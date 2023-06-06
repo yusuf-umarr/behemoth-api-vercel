@@ -25,7 +25,7 @@ exports.mailSender = async(to, subject, text, html) => {
       Messages: [
         {
           From: {
-            Email: process.env.MAIL_JET_EMAIL,
+            Email: process.env.MAIL_JET_EMAIL, 
             Name: "Behemoth",
           },
           To: [to],
@@ -45,11 +45,5 @@ exports.mailSender = async(to, subject, text, html) => {
     
   }
 
-  // request
-  //   .then((result) => {
-  //     console.log(result.body);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err.statusCode);
-  //   });
+
 };
