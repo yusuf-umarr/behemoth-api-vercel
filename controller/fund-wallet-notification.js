@@ -10,7 +10,7 @@ const sendWalletNotification = async(req, res, next,) => {
     const { amount} = req.body;
 
     let headingText ="Wallet Funded"
-    let contentText =`You have successfuly added ${amount} to your wallet`
+    let contentText =`You have successfuly added ${amount} to your wallet `
     let deviceId =user.oneSignalId
  
 
