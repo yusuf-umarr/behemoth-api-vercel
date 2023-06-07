@@ -1,6 +1,7 @@
 const express = require("express");
 const userRouter = express.Router();
 const auth = require("../middlewares/auth");
+const sendWalletNotification = require("../controller/fund-wallet-notification");
 const User = require("../models/user");
 const Wallet = require("../models/wallet")
 const bcryptjs = require("bcryptjs");
@@ -72,10 +73,10 @@ userRouter.post("/create-wallet", auth, async (req, res) => {
   }
 });
 // fund wallet 
-userRouter.post("/fund-wallet", auth, async (req, res) => {
+userRouter.post("/fund-wallet", auth,
+  sendWalletNotification,
+  async (req, res) => {
   try {
-
-    let user = await User.findById(req.user);
 
     const { amount} = req.body;
 
@@ -85,20 +86,14 @@ userRouter.post("/fund-wallet", auth, async (req, res) => {
 
     let updateWallet  =  await Wallet.findById(walletId)
 
-    let headingText ="Wallet Funded"
-    let contentText =`You have successfuly added ${amount} to your wallet`
-    let deviceId =user.oneSignalId
-
-
     updateWallet.amount += amount;
 // 
     updateWallet = await updateWallet.save();
 
-   await pushNotificationController.sendWalletNotification(
-    headingText, contentText, deviceId,
-    )
-
+  
+    // res.json({"headingText":headingText, "contentText":contentText, "deviceId":deviceId, "updateWallet":updateWallet});
     res.json(updateWallet);
+  
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
