@@ -1,22 +1,3 @@
-// const mongoose = require("mongoose");
-
-// const walletSchema = mongoose.Schema({
- 
-//   amount: {
-//     type: Number,
-//     default: 0 ,
-//     required: true,
-//   },
-
-//   userId: {
-//     required: true,
-//     type: String,
-//   },
- 
-// });
-
-// const Wallet = mongoose.model("Wallet", walletSchema);
-// module.exports = Wallet;
 
 
 const mongoose = require("mongoose");

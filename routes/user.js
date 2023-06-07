@@ -4,18 +4,10 @@ const auth = require("../middlewares/auth");
 const sendWalletNotification = require("../controller/fund-wallet-notification");
 const User = require("../models/user");
 const Wallet = require("../models/wallet")
+const Inbox = require("../models/inbox")
 const bcryptjs = require("bcryptjs");
 
 const pushNotificationController = require("../controller/push-notification.controller");
-const {ONE_SIGNAL_CONFIG} = require("../config/app.config");
-const pushNotificationService = require("../services/push-notification.service");
-
-
-// const accountSid = process.env.TWILIO_ACCOUNT_SID;
-// const authToken = process.env.TWILIO_AUTH_TOKEN;
-// const client = require('twilio')(accountSid, authToken);
-
-
 
 userRouter.get("/", (req, res) => {
   res.json({ "hello":" user netlify!!!!!"})
@@ -72,6 +64,7 @@ userRouter.post("/create-wallet", auth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
+
 // fund wallet 
 userRouter.post("/fund-wallet", auth,
   sendWalletNotification,
@@ -80,18 +73,31 @@ userRouter.post("/fund-wallet", auth,
 
     const { amount} = req.body;
 
+    let title ="Wallet Funded"
+    let description =`You have successfuly added ${amount} to your wallet`
+
     let wallet = await Wallet.find({userId:req.user});
 
     let walletId =   wallet[0]._id
 
     let updateWallet  =  await Wallet.findById(walletId)
 
+    let inbox = new Inbox({
+      title,
+      description,
+      userId:req.user,
+    });
+
     updateWallet.amount += amount;
 // 
     updateWallet = await updateWallet.save();
 
+
+
+    inbox = await inbox.save();
+
+
   
-    // res.json({"headingText":headingText, "contentText":contentText, "deviceId":deviceId, "updateWallet":updateWallet});
     res.json(updateWallet);
   
   } catch (e) {
@@ -170,6 +176,27 @@ userRouter.post("/add-onesignal-id", async (req, res) => {
 
     }
   
+  } catch (e) {
+    res.status(500).json( e.message );
+  }
+});
+
+userRouter.post("/add-inbox", async (req, res) => {
+  try {
+    const { title, description, email } = req.body;
+    let existingUser = await User.findOne({ email });
+    if (!existingUser) return;
+
+    let inbox = new Inbox({
+      title,
+      description,
+      userId:existingUser._id,
+    });
+
+    inbox = await Inbox.save();
+
+    return res.json(inbox);
+
   } catch (e) {
     res.status(500).json( e.message );
   }
