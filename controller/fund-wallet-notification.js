@@ -36,12 +36,15 @@ const sendWalletNotification = async(req, res, next,) => {
                 if (error) {
                     return next(error);  
                 }
-                return res.status(200).send({
-                    message: "Success",
-                    data: results,
-                })
+                //  res.status(200).send({
+                //     message: "Success",
+                //     data: results,
+                // })
+              
         
             });
+            next();
+
  
         
     } catch (error) {
