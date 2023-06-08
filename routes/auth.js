@@ -98,7 +98,6 @@ authRouter.post("/verify-otp", async (req, res) => {
     if (existingUser) {
       getVerify = await VerificationToken.find({owner:existingUser._id});
 
-      // console.log(getVerify[0].token)
 
       const isMatch = await bcryptjs.compare(otp, getVerify[0].token);
     
@@ -109,6 +108,7 @@ authRouter.post("/verify-otp", async (req, res) => {
       existingUser.isVerified =true;
 
       existingUser = await existingUser.save();
+      
       await VerificationToken.findByIdAndDelete(getVerify[0]._id);
 
       const token = jwt.sign({ id: existingUser._id }, "passwordKey");
@@ -187,6 +187,13 @@ authRouter.post("/signin", async (req, res) => {
         .status(400)
         .json("User with this email does not exist!" );
     }
+    
+    if (!user.isVerified) {
+      return res
+        .status(400)
+        .json("Account not verified");
+    }
+
 
     const isMatch = await bcryptjs.compare(password, user.password);
 
