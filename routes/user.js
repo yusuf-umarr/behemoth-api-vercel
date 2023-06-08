@@ -201,6 +201,18 @@ userRouter.post("/add-inbox", async (req, res) => {
     res.status(500).json( e.message );
   }
 });
+userRouter.get("/get-inbox",auth, async (req, res) => {
+  try {
+    let inbox = await Inbox.find({ userId: req.user });
+    if (!inbox) return;
+
+
+    return res.json(inbox);
+
+  } catch (e) {
+    res.status(500).json( e.message );
+  }
+});
 
 
 

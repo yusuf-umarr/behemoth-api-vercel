@@ -7,6 +7,7 @@ const authRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const auth = require("../middlewares/auth");
 const { generateOTP, mailSender } = require('../middlewares/utils')
+const Inbox = require("../models/inbox")
 
 
 authRouter.get("/", (req, res) => {
@@ -204,6 +205,22 @@ authRouter.get("/get-user", async (req, res) => {
     const user = await User.findById(verified.id);
  
     res.json({ ...user._doc, token });
+
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+authRouter.get("/get-inbox", async (req, res) => {
+  try {
+    const token = req.header("x-auth-token");
+    if (!token) return res.json(false);
+ 
+    const verified = jwt.verify(token, "passwordKey");
+    if (!verified) return res.json(false);
+
+    const user = await Inbox.find({userId: verified.id});
+ 
+    res.json({ user, "inbox":token});
 
   } catch (e) {
     res.status(500).json({ error: e.message });
