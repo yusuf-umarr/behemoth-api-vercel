@@ -28,6 +28,9 @@ authRouter.post("/signup", async (req, res) => {
 
     const hashedPassword = await bcryptjs.hash(password, 8);
 
+    let title ="Welcome to Behemoth"
+    let description =`You are welcome to Behemoth, `
+
     let user = new User({
       email,
       password: hashedPassword,
@@ -62,9 +65,15 @@ authRouter.post("/signup", async (req, res) => {
     userId: user._id
   });
 
-  userWallet = await userWallet.save();
+  let inbox = new Inbox({
+    title,
+    description,
+    userId:user._id,
+  });
 
+    inbox = await inbox.save();
 
+    userWallet = await userWallet.save();
 
     verificationToken = await verificationToken.save();
     user = await user.save();
@@ -135,7 +144,6 @@ authRouter.post("/resend-otp", async (req, res) => {
         owner: existingUser._id,
         token: hashedOTP
       })
-
 
 
       let to = {
@@ -226,121 +234,6 @@ authRouter.get("/get-inbox", async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-
-
-
-
-
-
-// const url = 'https://calling.api.sinch.com/calling/v1/callouts';
-// const body = {
-//   method: 'ttsCallout',
-//   ttsCallout: {
-//     cli: '+447520651393',
-//     domain: 'pstn',
-//     destination: {
-//       type: 'number',
-//       endpoint: '+2347036456047'
-//     },
-//     locale: 'en-US',
-//     prompts: '#tts[]'
-//   }
-// };
-
-// const headers = {
-//   'Content-Type': 'application/json',
-//   'Authorization': 'Basic N2FmNzZjYzAtZmVjOS00NmMwLTkxOTktZDE0Yzg2MjUxM2ExOkpQSEJYVFV1VEUya3pFVk1LS2NsQVE9PQ=='
-// };
-
-// authRouter.post("/sinch-call", async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       return res
-//         .status(400)
-//         .json("User with this email does not exist!" );
-//     }
-
-//     const isMatch = await bcryptjs.compare(password, user.password);
-
-//     if (!isMatch) {
-//       return res.status(400).json("Incorrect password." );
-//     }
-
-//     const token = jwt.sign({ id: user._id }, "passwordKey");
-//     res.json({ token, ...user._doc });
-//   } catch (e) {
-//     res.status(500).json(e.message );
-//   }
-// });
-
-
-// authRouter.post("/make-call",  async (req, res) => {
-//   try {
-
-//     client.calls
-//       .create({
-//          twiml: '<Response><Say>Ahoy, World!</Say></Response>',
-//          to: '+2347036456047',
-//          from: '+12546154889'
-//        })
-//       .then(call => console.log(call.sid));
-//   } catch (e) {
-//     res.status(500).json({ error: e.message });
-//   }
-// });
-
-
-// authRouter.post("/send-message", auth, async (req, res) => {
-//   try {
-
-//     client.messages
-//     .create({
-//       body: 'Hello from twilio-node',
-//       to: '+2347036456047', // Text your number
-//       from: '+12546154889', // From a valid Twilio number
-//     })
-//     .then((message) => console.log(message.sid));
-//   } catch (e) {
-//     res.status(500).json({ error: e.message });
-//   }
-// });
-
-
-
-
-
-// const ANSWER_URL = 'https://raw.githubusercontent.com/nexmo-community/ncco-examples/gh-pages/text-to-speech.json'
-
-
-// authRouter.post("/vonage-call", auth, async (req, res) => {
-//   try {
-
-//     vonage.voice.createOutboundCall({
-//       to: [{
-//         type: 'phone',
-//         number: +2347036456047
-//       }],
-//       from: {
-//         type: 'phone',
-//         number: VONAGE_NUMBER
-//       },
-//       answer_url: [ANSWER_URL]
-//     })
-//       .then(resp => console.log(resp))
-//       .catch(err => console.error(err));
-  
-//   } catch (e) {
-//     res.status(500).json({ error: e.message });
-//   }
-// });
-
-
-
-
-
 
 
 module.exports = authRouter;

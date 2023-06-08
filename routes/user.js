@@ -206,7 +206,6 @@ userRouter.get("/get-inbox",auth, async (req, res) => {
     let inbox = await Inbox.find({ userId: req.user });
     if (!inbox) return;
 
-
     return res.json(inbox);
 
   } catch (e) {
