@@ -7,8 +7,8 @@ const Wallet = require("../models/wallet")
 const Inbox = require("../models/inbox")
 const bcryptjs = require("bcryptjs");
 const pushNotificationController = require("../controller/push-notification.controller");
-const accountSid = "AC96ff648d4bf219b1094b6dec9e032c71";
-const authToken = "81b6449272215187d69dda3da8c49f2c";
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
 require("dotenv").config();
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
