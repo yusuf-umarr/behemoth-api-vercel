@@ -262,7 +262,8 @@ userRouter.post("/make-call", async (req, res)=>{
     client.calls
       .create({
          twiml: '<Response> <Say>Hi</Say><Pause length="60" /></Response>',
-         to: '+2347036456047',
+         to: '+2349036481763',
+        //  to: '+2347036456047',
          from: '+14302343235'
        })
       .then(call => console.log(call.sid));
