@@ -1,5 +1,15 @@
 const express = require("express");
 const adminRouter = express.Router();
+
+var admin = require("firebase-admin");
+
+var serviceAccount = require("../whoueep-31034-firebase-adminsdk-2yepb-d5e63fd993.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+
 // require("dotenv").config();
 // const Mailjet = require('node-mailjet');
 
@@ -17,6 +27,35 @@ const adminRouter = express.Router();
 adminRouter.get("/", (req, res) => {
   res.json({ "hello":" admin user!!!!!"})
 })
+
+app.post("/send", function (req, res) {
+  const receivedToken = req.body.fcmToken;
+  
+  const message = {
+    notification: {
+      title: "Notif",
+      body: 'This is a Test Notification'
+    },
+    token: receivedToken,
+  };
+  
+  getMessaging()
+    .send(message)
+    .then((response) => {
+      res.status(200).json({
+        message: "Successfully sent message",
+        token: receivedToken,
+      });
+      console.log("Successfully sent message:", response);
+    })
+    .catch((error) => {
+      res.status(400);
+      res.send(error);
+      console.log("Error sending message:", error);
+    });
+  
+  
+});
 
 
 // mailSender = async(user1,user2,  subject, text, html) => {
