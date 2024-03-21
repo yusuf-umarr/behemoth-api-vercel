@@ -27,7 +27,7 @@ admin.initializeApp({
 
 
 adminRouter.get("/", (req, res) => {
-  res.json({ "hello":" admin user!!!!!"})
+  res.json({ "hello":" admin user!!!"})
 })
 
 app.post("/send", function (req, res) {
