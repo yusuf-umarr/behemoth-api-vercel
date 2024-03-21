@@ -2,8 +2,10 @@ const express = require("express");
 const adminRouter = express.Router();
 
 var admin = require("firebase-admin");
+require('dotenv').config()
 
-var serviceAccount = require("../whoueep-31034-firebase-adminsdk-2yepb-d5e63fd993.json");
+
+var serviceAccount = require(process.env.GOOGLE_APPLICATION_CREDENTIALS);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
